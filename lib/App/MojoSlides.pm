@@ -2,7 +2,7 @@ package App::MojoSlides;
 
 use Mojo::Base 'Mojolicious';
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 $VERSION = eval $VERSION;
 
 use App::MojoSlides::Slides;
@@ -41,6 +41,9 @@ sub startup {
       bootstrap_theme => undef,
     },
   });
+
+  # should this be optional?
+  $self->include_data_handle_from_file(scalar $self->presentation_file);
 
   if (my $path = $self->config->{templates}) {
     unshift @{ $self->renderer->paths }, ref $path ? @$path : $path;
@@ -88,6 +91,21 @@ sub _action {
   my $slide = $slides->template_for($c->stash('slide'))
     or return $c->render_not_found;
   $c->render($slide, layout => 'basic') || $c->render_not_found;
+}
+
+# hic sunt dracones
+sub include_data_handle_from_file {
+  my ($self, $file) = @_;
+  require Mojo::Util;
+  my $string = Mojo::Util::slurp($file);
+  open my $handle, '<', \$string;
+  state $i = 0;
+  my $class = 'App::MojoSlides::TextOfFile' . $i++;
+  {
+    no strict 'refs';
+    *{$class.'::DATA'} = $handle;
+  }
+  unshift @{ $self->renderer->classes }, $class;
 }
 
 1;
@@ -156,6 +174,10 @@ Of course you will still have to include them in some template for them to be in
 If true, the bootstrap-theme.min.css file will be included in the default layout.
 
 =back
+
+=head2 Slides from __DATA__
+
+Emulating L<Mojolicious::Lite>, you may also include slides (templates) in the C<__DATA__> section of your configuration file!
 
 =head2 The Slides (Templates)
 
