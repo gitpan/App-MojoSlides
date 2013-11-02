@@ -1,0 +1,21 @@
+bin/mojo_slides
+Build.PL
+Changes
+ex/example_presentation.pl
+ex/goodbye.html.ep
+ex/hello.html.ep
+lib/App/MojoSlides.pm
+lib/App/MojoSlides/files/public/bootstrap-theme.min.css
+lib/App/MojoSlides/files/public/bootstrap.min.css
+lib/App/MojoSlides/files/public/bootstrap.min.js
+lib/App/MojoSlides/files/public/jquery.min.js
+lib/App/MojoSlides/files/public/mojoslides.css
+lib/App/MojoSlides/files/public/mojoslides.js
+lib/App/MojoSlides/files/public/mousetrap.min.js
+lib/App/MojoSlides/files/templates/layouts/basic.html.ep
+lib/App/MojoSlides/Slides.pm
+MANIFEST			This list of files
+META.json
+META.yml
+README.pod
+t/00-load.t
