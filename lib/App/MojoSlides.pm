@@ -2,7 +2,7 @@ package App::MojoSlides;
 
 use Mojo::Base 'Mojolicious';
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 $VERSION = eval $VERSION;
 
 use App::MojoSlides::Slides;
@@ -40,6 +40,10 @@ sub startup {
       static    => undef,
       bootstrap_theme => undef,
       more_tag_helpers => 1,
+      extra_css => undef,
+      extra_js => undef,
+      header_template => 'ms_header',
+      footer_template => 'ms_footer',
     },
   });
 
@@ -78,6 +82,7 @@ sub startup {
   $self->helper( row     => sub { shift->tag( 'div', class => 'row', @_ ) } );
   $self->helper( column  => sub { shift->tag( 'div', class => 'col-md-'.shift, @_ ) } );
   $self->helper( overlay => sub { shift->tag( 'div', msOverlay => shift, @_ ) } );
+  $self->helper( vspace  => sub { shift->tag( 'div', style => "min-height: @{[shift]};" => '') } );
 
   my $r = $self->routes;
   $r->any(
@@ -169,8 +174,8 @@ The API for this key is still influx, but that much is probably not going to cha
 =item templates
 
 Use this key to specify which directories contain your slides.
-Your slides are actually Mojolicious Templates (see L<Mojolicious::Guides::Rendering> and L<Mojo::Template> for more on that.
-This key take a string or arrayref of strings which are prepended to the app's template directories.
+Your slides are actually Mojolicious Templates (see L<Mojolicious::Guides::Rendering> and L<Mojo::Template> for more on that).
+This key takes a string or arrayref of strings which are prepended to the app's template directories.
 
 =item static
 
@@ -186,9 +191,23 @@ If true, the bootstrap-theme.min.css file will be included in the default layout
 
 If true (by default), wrap lots more html tags into tag helpers from L<App::MojoSlides::MoreTagHelpers>.
 
+=item extra_css
+
+=item extra_js
+
+If desired, these values may contain a string or arrayreference of strings of the full path to any publically available css or javascript file respectively which should be included in the overall template.
+Note that the string should start with a leading C</>.
+
+=item header_template
+
+=item footer_template
+
+The name of the template to be included as the header or footer. Defaults to C<ms_header> and C<ms_footer> respectively.
+Set to C<undef> to not include any template.
+
 =back
 
-=head2 Slides from __DATA__
+=head3 Slides from __DATA__
 
 Emulating L<Mojolicious::Lite>, you may also include slides (templates) in the C<__DATA__> section of your configuration file!
 

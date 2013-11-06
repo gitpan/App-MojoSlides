@@ -6,13 +6,21 @@
     %= stylesheet '/bootstrap-theme.min.css' if config->{bootstrap_theme}
     %= stylesheet '/mojoslides.css'
     %= app->ppi_css if config->{ppi}
+    % if (my $files = config->{extra_css}) {
+      % $files = [ $files ] unless ref $files;
+      % foreach my $file (@$files) {
+        %= stylesheet $file
+      % }
+    % }
     </head>
   <body>
 
   <!-- wrap non-footer contents -->
     <div id="wrap">
       <div class="container">
-        <h1 class="center"><%= title %></h1>
+        % if (my $header = config->{header_template} ) {
+          %= include $header
+        % }
         <div id="main">
           %= content
         </div>
@@ -21,17 +29,9 @@
 
     <!-- footer -->
     <div id="footer" class="container">
-      <ul class="pager">
-        <li class="previous">
-          %= link_to Previous => slide => { slide => prev_slide }
-        </li>
-        <li>
-          %= "Page $slide / " . last_slide
-        </li>
-        <li class="next">
-          %= link_to Next => slide => { slide => next_slide }
-        </li>
-      </ul>
+      % if (my $footer = config->{footer_template}) {
+        %= include $footer
+      % }
     </div>
 
     %= javascript '/jquery.min.js'
@@ -43,5 +43,12 @@
       "<%= url_for slide => { slide => next_slide } %>"
     );
     % end
+    
+    % if (my $files = config->{extra_js}) {
+      % $files = [ $files ] unless ref $files;
+      % foreach my $file (@$files) {
+        %= javascript $file
+      % }
+    % }
   </body>
 </html>
